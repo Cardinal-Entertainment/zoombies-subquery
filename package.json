@@ -1,7 +1,7 @@
 {
   "name": "zoombies-subquery",
   "version": "1.0.0",
-  "description": "Zoom Token mint, burn and approvals on Moonriver",
+  "description": "Zoom Token mint, burn and approvals on Moonbase",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -b",
@@ -21,10 +21,11 @@
   "devDependencies": {
     "@polkadot/api": "^7",
     "@subql/cli": "latest",
-    "typescript": "^4.1.3"
+    "typescript": "^4.2.4",
+    "moonbeam-types-bundle": "^2.0.3"
   },
   "dependencies": {
-    "@subql/contract-processors": "^0.5.0",
+    "@subql/contract-processors": "^0.5.3",
     "@subql/types": "latest",
     "ethers": "^5.5.0"
   },
