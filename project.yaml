@@ -51,7 +51,7 @@ dataSources:
               - null
               - null
   - kind: substrate/Moonbeam
-    startBlock: 799157
+    startBlock: 799150
     processor:
       file: './node_modules/@subql/contract-processors/dist/moonbeam.js'
       options:
@@ -60,7 +60,7 @@ dataSources:
         address: "0x3E7997B8D30AA6216102fb2e9206246e478d57d3"
     assets:
       erc721:
-        file: './zoombies.json'
+        file: './Zoombies.json'
     mapping:
       file: './dist/index.js'
       handlers:
