@@ -1,4 +1,4 @@
-import {Transaction,Sum,ZoomPerDay,LogCardMinted,LogPackOpened,LogSponsorReward,LogDailyReward,LogRewardBooster,LogSacrificeNFT,NftTransfer} from "../types";
+import {Transaction,Sum,ZoomPerDay,LogCardMinted,MintedType,LogPackOpened,LogSponsorReward,LogDailyReward,LogRewardBooster,LogSacrificeNFT,NftTransfer} from "../types";
 import { MoonbeamEvent} from '@subql/contract-processors/dist/moonbeam';
 import { BigNumber } from "ethers";
 
@@ -25,6 +25,11 @@ function createTrackedPerDay(timestamp: string): ZoomPerDay {
   entity.minted = BigInt(0);
   entity.burned = BigInt(0);
   return entity;
+}
+
+function createMintedTypes(cardTypeId: string): MintedType {
+  const entity = new MintedType(cardTypeId);
+  return
 }
 
 export async function handleMoonriverEvent(event: MoonbeamEvent<TransferEventArgs>): Promise<void> {
@@ -73,8 +78,15 @@ export async function handleLogCardMintedEvent(event: MoonbeamEvent<CardMintedEv
   card.tokenId = event.args.tokenId;
   card.cardTypeId = event.args.cardTypeId;
   card.editionNumber = event.args.editionNumber;
-
   await card.save();
+
+  let typeMinted = await MintedType.get((event.args.cardTypeId).toString());
+  if(typeMinted === undefined){
+    typeMinted = new MintedType((event.args.cardTypeId).toString());
+    typeMinted.blockTimestamp = event.blockTimestamp;
+    typeMinted.cardTypeId = event.args.cardTypeId;
+    await typeMinted.save();
+  }
 }
 
 export async function handleLogPackOpenedEvent(event: MoonbeamEvent<LogPackOpenedEventArgs>): Promise<void> {

@@ -10,6 +10,8 @@ export {ZoomPerDay} from "./ZoomPerDay"
 
 export {LogCardMinted} from "./LogCardMinted"
 
+export {MintedType} from "./MintedType"
+
 export {LogPackOpened} from "./LogPackOpened"
 
 export {LogSponsorReward} from "./LogSponsorReward"

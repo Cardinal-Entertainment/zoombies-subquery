@@ -54,6 +54,15 @@ type LogCardMinted @entity {
   editionNumber: BigInt!
 }
 
+type MintedType @entity {
+  id: ID!
+
+  blockTimestamp: Date!
+
+  cardTypeId: Int!
+
+}
+
 type LogPackOpened @entity {
  id: ID!
 
