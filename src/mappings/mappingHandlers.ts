@@ -1,4 +1,4 @@
-import {Transaction,Sum,ZoomPerDay,LogCardMinted,MintedType,LogPackOpened,LogSponsorReward,LogDailyReward,LogRewardBooster,LogSacrificeNFT,NftTransfer} from "../types";
+import {Transaction,Sum,ZoomPerDay,RarityPerDay,LogCardMinted,MintedType,LogPackOpened,LogSponsorReward,LogDailyReward,LogRewardBooster,LogSacrificeNFT,NftTransfer} from "../types";
 import { MoonbeamEvent} from '@subql/contract-processors/dist/moonbeam';
 import { BigNumber } from "ethers";
 
@@ -24,6 +24,17 @@ function createTrackedPerDay(timestamp: string): ZoomPerDay {
   const entity = new ZoomPerDay(timestamp);
   entity.minted = BigInt(0);
   entity.burned = BigInt(0);
+  return entity;
+}
+
+function createRarityPerDay(timestamp: string): RarityPerDay {
+  const entity = new RarityPerDay(timestamp);
+  entity.diamond = BigInt(0);
+  entity.platinum = BigInt(0);
+  entity.epic = BigInt(0);
+  entity.rare = BigInt(0);
+  entity.uncommon = BigInt(0);
+  entity.common = BigInt(0);
   return entity;
 }
 
@@ -95,8 +106,41 @@ export async function handleLogPackOpenedEvent(event: MoonbeamEvent<LogPackOpene
   pack.blockTimestamp = event.blockTimestamp;
   pack.buyer = event.args.buyer;
   pack.rarity = event.args.rarity;
-
   await pack.save();
+
+  const date = Date.parse(new Date(event.blockTimestamp).toISOString().split('T')[0]).toString();
+
+  let rpd = await RarityPerDay.get(date);
+  if(rpd === undefined){
+    rpd = createRarityPerDay(date);
+  }
+
+  switch (event.args.rarity) {
+    case 1:
+          rpd.diamond = BigInt(rpd.diamond) + BigInt(1);
+      break;
+    case 2:
+          rpd.platinum = BigInt(rpd.platinum) + BigInt(1);
+      break;
+    case 3:
+          rpd.epic = BigInt(rpd.epic) + BigInt(1);
+      break;
+    case 4:
+          rpd.rare = BigInt(rpd.rare) + BigInt(1);
+      break;
+    case 5:
+          rpd.uncommon = BigInt(rpd.uncommon) + BigInt(1);
+      break;
+    case 6:
+          rpd.common = BigInt(rpd.common) + BigInt(1);
+      break;
+    default:
+          logger.info("Error in storing LogPackOpenedEvent");
+          logger.info(event);
+      break;
+  }
+
+  await rpd.save();
 }
 
 export async function handleLogSponsorRewardEvent(event: MoonbeamEvent<LogSponsorRewardEventArgs>): Promise<void> {

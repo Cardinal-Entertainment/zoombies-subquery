@@ -36,6 +36,24 @@ type ZoomPerDay @entity {
 
 }
 
+type RarityPerDay @entity {
+
+  id: ID! #timestamp
+
+  diamond: BigInt
+
+  platinum: BigInt
+
+  epic: BigInt
+
+  rare: BigInt
+
+  uncommon: BigInt
+
+  common: BigInt
+
+}
+
 # LogCardMinted(address indexed buyer, uint tokenId, uint32 indexed cardTypeId, uint editionNumber);
 
 type LogCardMinted @entity {
