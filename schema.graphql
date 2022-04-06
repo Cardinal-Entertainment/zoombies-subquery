@@ -36,6 +36,16 @@ type ZoomPerDay @entity {
 
 }
 
+type NFTPerDay @entity {
+
+  id: ID! #timestamp
+
+  minted: BigInt
+
+  burned: BigInt
+  
+}
+
 type RarityPerDay @entity {
 
   id: ID! #timestamp

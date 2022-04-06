@@ -1,4 +1,4 @@
-import {Transaction,Sum,ZoomPerDay,RarityPerDay,LogCardMinted,MintedType,LogPackOpened,LogSponsorReward,LogDailyReward,LogRewardBooster,LogSacrificeNFT,NftTransfer} from "../types";
+import {Transaction,Sum,ZoomPerDay,NFTPerDay,RarityPerDay,LogCardMinted,MintedType,LogPackOpened,LogSponsorReward,LogDailyReward,LogRewardBooster,LogSacrificeNFT,NftTransfer} from "../types";
 import { MoonbeamEvent} from '@subql/contract-processors/dist/moonbeam';
 import { BigNumber } from "ethers";
 
@@ -22,6 +22,13 @@ function createSum(id: string): Sum {
 
 function createTrackedPerDay(timestamp: string): ZoomPerDay {
   const entity = new ZoomPerDay(timestamp);
+  entity.minted = BigInt(0);
+  entity.burned = BigInt(0);
+  return entity;
+}
+
+function createNFTPerDay(timestamp: string): NFTPerDay {
+  const entity = new NFTPerDay(timestamp);
   entity.minted = BigInt(0);
   entity.burned = BigInt(0);
   return entity;
@@ -98,6 +105,16 @@ export async function handleLogCardMintedEvent(event: MoonbeamEvent<CardMintedEv
     typeMinted.cardTypeId = event.args.cardTypeId;
     await typeMinted.save();
   }
+
+  //Create entity to hold count NFT minted Per Day
+  const date = Date.parse(new Date(event.blockTimestamp).toISOString().split('T')[0]).toString();
+
+  let npd = await NFTPerDay.get(date);
+  if(npd === undefined){
+    npd = createNFTPerDay(date);
+  }
+  npd.minted = BigInt(npd.minted) + BigInt(1);
+  await npd.save();
 }
 
 export async function handleLogPackOpenedEvent(event: MoonbeamEvent<LogPackOpenedEventArgs>): Promise<void> {
@@ -184,6 +201,16 @@ export async function handleLogSacrificeNFTEvent(event: MoonbeamEvent<LogSacrifi
   sac.zoomGained = event.args.zoomGained;
 
   await sac.save();
+
+  //Create entity to hold count NFT minted Per Day
+  const date = Date.parse(new Date(event.blockTimestamp).toISOString().split('T')[0]).toString();
+
+  let npd = await NFTPerDay.get(date);
+  if(npd === undefined){
+    npd = createNFTPerDay(date);
+  }
+  npd.burned = BigInt(npd.burned) + BigInt(1);
+  await npd.save();
 }
 
 export async function handleNFTTransferEvent(event: MoonbeamEvent<NFTTransferEventArgs>): Promise<void> {

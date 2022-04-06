@@ -8,6 +8,8 @@ export {Sum} from "./Sum"
 
 export {ZoomPerDay} from "./ZoomPerDay"
 
+export {NFTPerDay} from "./NFTPerDay"
+
 export {RarityPerDay} from "./RarityPerDay"
 
 export {LogCardMinted} from "./LogCardMinted"
